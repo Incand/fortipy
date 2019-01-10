@@ -573,6 +573,17 @@ class FortiManager(Forti):
         )
 
     @login_required
+    def get_webfilter_ftgd_local_cats(self, adom, **kwargs):
+        '''
+        Get all webfilter ftgd local categories
+        '''
+        return self._get(
+            url='/pm/config/adom/{}/obj/webfilter/ftgd-local-cat'.format(adom),
+            request_id=8181,
+            **kwargs
+        )
+
+    @login_required
     def get_ips_sensors(self, adom, **kwargs):
         '''
         Get all firewall adresses defined for an ADOM
