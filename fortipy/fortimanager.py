@@ -425,6 +425,17 @@ class FortiManager(Forti):
         )
 
     @login_required
+    def get_firewall_proxy_address_groups(self, adom, **kwargs):
+        '''
+        Get all firewall proxy address groups defined for an ADOM
+        '''
+        return self._get(
+            url='pm/config/adom/{}/obj/firewall/proxy-addrgrp'.format(adom),
+            request_id=56229,
+            **kwargs
+        )
+
+    @login_required
     def get_firewall_address_group(self, adom, addrgrp_name, **kwargs):
         '''
         Get all firewall adress groups defined for an ADOM
