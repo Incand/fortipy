@@ -550,6 +550,7 @@ class FortiManager(Forti):
             **kwargs
         )
 
+    @login_required
     def get_webfilters(self, adom, **kwargs):
         '''
         Get all antivirus profiles defined for an ADOM
@@ -557,6 +558,17 @@ class FortiManager(Forti):
         return self._get(
             url='pm/config/adom/{}/obj/webfilter/profile'.format(adom),
             request_id=8177,
+            **kwargs
+        )
+
+    @login_required
+    def get_webfilter_categories(self, adom, **kwargs):
+        '''
+        Get all webfilter categories
+        '''
+        return self._get(
+            url='/pm/config/adom/{}/obj/webfilter/categories'.format(adom),
+            request_id=8179,
             **kwargs
         )
 
