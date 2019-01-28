@@ -165,7 +165,7 @@ class Forti(object):
         return res['result']['data']
 
     @login_required
-    def _add(self, url, data, request_id=12, verbose=False):
+    def _add(self, url, data, request_id=12, verbose=False, **kwargs):
         '''
         Generic "add" function
         '''
@@ -174,11 +174,12 @@ class Forti(object):
             url=url,
             request_id=request_id,
             data=data,
-            verbose=verbose
+            verbose=verbose,
+            **kwargs
         )
 
     @login_required
-    def _set(self, url, data, request_id=14, verbose=False):
+    def _set(self, url, data, request_id=14, verbose=False, **kwargs):
         '''
         Generic "set" method
         '''
@@ -187,7 +188,8 @@ class Forti(object):
             url=url,
             request_id=request_id,
             data=data,
-            verbose=verbose
+            verbose=verbose,
+            **kwargs
         )
 
     @login_required
