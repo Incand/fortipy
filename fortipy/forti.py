@@ -12,7 +12,7 @@ import json
 import logging
 import requests
 
-from exceptions import ConnectionError, LoginError
+from .exceptions import Error, ConnectionError, LoginError
 
 
 logging.basicConfig(level=logging.DEBUG)
@@ -269,15 +269,17 @@ class Forti(object):
             username = self.credentials.userID
         if password is None:
             password = self.credentials.password
-        res = self._exec(
-            url='sys/login/user',
-            data={'passwd': password, 'user': username}
-        )
-        assert res, 'No data received'
+        try:
+            res = self._exec(
+                url='sys/login/user',
+                data={'passwd': password, 'user': username}
+            )
+        except requests.exceptions.ConnectionError:
+            raise ConnectionError('Name or service not known')
         if not res:
-            raise ConnectionError('Connection failed: No data received.')
+            raise ConnectionError('No data received')
         if 'session' not in res:
-            raise LoginError('Login failed: {}'.format(res))
+            raise LoginError(res['result'][0]['status']['message'])
         self.token = res['session']
         # Automatically log out at program exit
         atexit.register(self.logout)
