@@ -12,6 +12,8 @@ import json
 import logging
 import requests
 
+from exceptions import ConnectionError, LoginError
+
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -49,6 +51,7 @@ def commonerrorhandler(f):
             return result
         except Exception as e:
             logger.error('Caught exception: {}'.format(e))
+            raise e
     return wrapped
 
 
@@ -165,7 +168,7 @@ class Forti(object):
         return res['result']['data']
 
     @login_required
-    def _add(self, url, data, request_id=12, verbose=False):
+    def _add(self, url, data, request_id=12, verbose=False, **kwargs):
         '''
         Generic "add" function
         '''
@@ -174,11 +177,12 @@ class Forti(object):
             url=url,
             request_id=request_id,
             data=data,
-            verbose=verbose
+            verbose=verbose,
+            **kwargs
         )
 
     @login_required
-    def _set(self, url, data, request_id=14, verbose=False):
+    def _set(self, url, data, request_id=14, verbose=False, **kwargs):
         '''
         Generic "set" method
         '''
@@ -187,7 +191,8 @@ class Forti(object):
             url=url,
             request_id=request_id,
             data=data,
-            verbose=verbose
+            verbose=verbose,
+            **kwargs
         )
 
     @login_required
@@ -254,6 +259,7 @@ class Forti(object):
             **kwargs
         )
 
+    @commonerrorhandler
     def login(self, username=None, password=None):
         '''
         Login using given credentials
@@ -269,20 +275,14 @@ class Forti(object):
         )
         assert res, 'No data received'
         if not res:
-            msg = 'Connection failed: No data received.'
-            logger.error(msg)
-            raise Exception(msg)
+            raise ConnectionError('Connection failed: No data received.')
         if 'session' not in res:
-            msg = 'Login failed: {}'.format(res)
-            logger.error(msg)
-            raise Exception(msg)
-        else:
-            self.token = res['session']
-            # Automatically log out at program exit
-            atexit.register(self.logout)
-            self._token_age = datetime.datetime.now()
-            return self.token
-
+            raise LoginError('Login failed: {}'.format(res))
+        self.token = res['session']
+        # Automatically log out at program exit
+        atexit.register(self.logout)
+        self._token_age = datetime.datetime.now()
+        return self.token
 
     @login_required
     def logout(self):
