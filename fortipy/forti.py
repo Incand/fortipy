@@ -268,14 +268,21 @@ class Forti(object):
             data={'passwd': password, 'user': username}
         )
         assert res, 'No data received'
-        if 'session' in res:
+        if not res:
+            msg = 'Connection failed: No data received.'
+            logger.error(msg)
+            raise Exception(msg)
+        if 'session' not in res:
+            msg = 'Login failed: {}'.format(res)
+            logger.error(msg)
+            raise Exception(msg)
+        else:
             self.token = res['session']
             # Automatically log out at program exit
             atexit.register(self.logout)
             self._token_age = datetime.datetime.now()
             return self.token
-        else:
-            logger.error('Login failed: {}'.format(res))
+
 
     @login_required
     def logout(self):
