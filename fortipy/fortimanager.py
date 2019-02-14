@@ -437,7 +437,7 @@ class FortiManager(Forti, metaclass=FortiManagerMeta):
     @login_required
     def get_firewall_addresses(self, adom, **kwargs):
         '''
-        Get all firewall adresses defined for an ADOM
+        Get all firewall addresses defined for an ADOM
         '''
         return self._get(
             url='pm/config/adom/{}/obj/firewall/address'.format(adom),
@@ -446,9 +446,21 @@ class FortiManager(Forti, metaclass=FortiManagerMeta):
         )
 
     @login_required
+    def update_firewall_addresses(self, adom, data, **kwargs):
+        '''
+        Set all firewall addresses defined for an ADOM
+        '''
+        return self._update(
+            url='pm/config/adom/{}/obj/firewall/address'.format(adom),
+            data=data,
+            request_id=5624,
+            **kwargs
+        )
+
+    @login_required
     def get_firewall_addresses6(self, adom):
         '''
-        Get all firewall adresses defined for an ADOM
+        Get all firewall addresses defined for an ADOM
         '''
         return self._get(
             url='pm/config/adom/{}/obj/firewall/address6'.format(adom),
@@ -458,7 +470,7 @@ class FortiManager(Forti, metaclass=FortiManagerMeta):
     @login_required
     def get_firewall_address6_groups(self, adom, **kwargs):
         '''
-        Get all firewall adresses defined for an ADOM
+        Get all firewall addresses defined for an ADOM
         '''
         return self._get(
             url='pm/config/adom/{}/obj/firewall/addrgrp6'.format(adom),
@@ -469,11 +481,23 @@ class FortiManager(Forti, metaclass=FortiManagerMeta):
     @login_required
     def get_firewall_address_groups(self, adom, **kwargs):
         '''
-        Get all firewall adress groups defined for an ADOM
+        Get all firewall address groups defined for an ADOM
         '''
         return self._get(
             url='pm/config/adom/{}/obj/firewall/addrgrp'.format(adom),
             request_id=56227,
+            **kwargs
+        )
+
+    @login_required
+    def update_firewall_address_groups(self, adom, data, **kwargs):
+        '''
+        Update firewall address groups defined for an ADOM
+        '''
+        return self._update(
+            url='pm/config/adom/{}/obj/firewall/addrgrp'.format(adom),
+            data=data,
+            request_id=56228,
             **kwargs
         )
 
@@ -485,6 +509,18 @@ class FortiManager(Forti, metaclass=FortiManagerMeta):
         return self._get(
             url='pm/config/adom/{}/obj/firewall/proxy-addrgrp'.format(adom),
             request_id=56229,
+            **kwargs
+        )
+
+    @login_required
+    def update_firewall_proxy_address_groups(self, adom, data, **kwargs):
+        '''
+        Update firewall proxy address groups defined for an ADOM
+        '''
+        return self._update(
+            url='pm/config/adom/{}/obj/firewall/proxy-addrgrp'.format(adom),
+            data=data,
+            request_id=56230,
             **kwargs
         )
 
@@ -731,9 +767,20 @@ if __name__ == '__main__':
     host = sys.argv[1]
     username = sys.argv[2]
     password = sys.argv[3]
+    adom = sys.argv[4]
     fm = FortiManager(
         host=host,
         username=username,
-        password=password
+        password=password,
+        verify=False
     )
-    print(fm.login())
+
+    resp = fm.get_firewall_addresses(adom)
+    pprint(resp[:10])
+
+    data = [{
+        'name': 'Adobe Login',
+        'wildcard-fqdn': '*.abobelogin.com'
+    }]
+
+    fm.update_firewall_addresses(adom, data)

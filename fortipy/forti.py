@@ -12,10 +12,10 @@ import json
 import logging
 import requests
 
-from .exceptions import Error, ConnectionError, LoginError
+from .exceptions import ConnectionError, LoginError
 
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
@@ -198,7 +198,7 @@ class Forti(object):
     @login_required
     def _update(self, url, data, request_id=15, verbose=False):
         '''
-        Generic "set" method
+        Generic "update" method
         '''
         return self._request(
             method='update',
