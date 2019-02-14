@@ -458,6 +458,29 @@ class FortiManager(Forti, metaclass=FortiManagerMeta):
         )
 
     @login_required
+    def get_firewall_proxy_addresses(self, adom, **kwargs):
+        '''
+        Get all firewall addresses defined for an ADOM
+        '''
+        return self._get(
+            url='pm/config/adom/{}/obj/firewall/proxy-address'.format(adom),
+            request_id=5623,
+            **kwargs
+        )
+
+    @login_required
+    def update_firewall_proxy_addresses(self, adom, data, **kwargs):
+        '''
+        Set all firewall addresses defined for an ADOM
+        '''
+        return self._update(
+            url='pm/config/adom/{}/obj/firewall/proxy-address'.format(adom),
+            data=data,
+            request_id=5624,
+            **kwargs
+        )
+
+    @login_required
     def get_firewall_addresses6(self, adom):
         '''
         Get all firewall addresses defined for an ADOM
