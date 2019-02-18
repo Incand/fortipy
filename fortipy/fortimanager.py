@@ -719,6 +719,19 @@ class FortiManager(Forti, metaclass=FortiManagerMeta):
         )
 
     @login_required
+    def update_webfilter_ftgd_local_ratings(self, adom, data, **kwargs):
+        '''
+        Update provided webfilter ftgd local ratings
+        '''
+        return self._update(
+            url='/pm/config/adom/{}/obj/webfilter/ftgd-local-rating'
+                .format(adom),
+            request_id=8184,
+            data=data,
+            **kwargs
+        )
+
+    @login_required
     def get_ips_sensors(self, adom, **kwargs):
         '''
         Get all firewall adresses defined for an ADOM
@@ -798,12 +811,28 @@ if __name__ == '__main__':
         verify=False
     )
 
-    resp = fm.get_firewall_addresses(adom)
-    pprint(resp[:10])
+    resp = fm.get_firewall_address_groups(adom)
 
-    data = [{
-        'name': 'Adobe Login',
-        'wildcard-fqdn': '*.abobelogin.com'
-    }]
+    old_member = [
+        'BDFDEHAMDC100000LB05-10.9.7.2',
+        'BDFDEHAMDC500000LB06-10.9.7.3',
+        'INT-217.111.75.1-COLT-Router',
+        'INT-194.175.243.97-UUNet-Router',
+        'INT-221.232.147.92-WUH-ISP',
+        'DMZ-BDFCNWUHPC-Net-10.191.254.32',
+        'DMZ-BDFDEHAMA2142-192.168.199.132-Cisco-ExpressGW',
+        'GRP-FW-Module',
+        'DMZ-BDFCNWUH-10.191.254.154-DMZ03-C390-1',
+        'DMZ-BDFCNWUH-10.191.254.155-DMZ03-C390-2',
+        'DMZ-BDFDEHAM00000000LA02-192.168.198.45-FortiAnalyzer',
+        'DMZ-BDFDEHAMDC100000MA02-192.168.198.44-FortiManager',
+        'Net-192.168.0.0'
+    ]
 
-    fm.update_firewall_addresses(adom, data)
+    resp = fm.update_firewall_addrgrp(
+        adom=adom,
+        addrgrp_name='GRP-NTP-Clients',
+        data={'member': old_member}
+    )
+
+    pprint(resp)
