@@ -52,56 +52,56 @@ def toggle_lock(f):
     return _wrapper
 
 
-class FortiManagerMeta(type):
-    '''
-    Metaclass for generating url binding methods.
-    '''
-    DEFAULT_URL_METHODS = ['get', 'set', 'add', 'delete', 'clone', 'move', 'exec']
+# class FortiManagerMeta(type):
+#     '''
+#     Metaclass for generating url binding methods.
+#     '''
+#     DEFAULT_URL_METHODS = ['get', 'set', 'add', 'delete', 'clone', 'move', 'exec']
+# 
+#     '''
+#     @login_required
+#     def get_security_profiles(self, adom, **kwargs):
+#         return self._get(
+#             url='pm/config/adom/{}/obj/firewall'.format(adom),
+#             request_id=5723,
+#             **kwargs
+#         )
+#     '''
+# 
+#     API_URLS = [
+#         'pm/config/adom/{}/obj/firewall'
+#     ]
+# 
+#     def generate_api_binding_method(api_method, url):
+#         name = '_'.join([api_method, url.split('/')[-1]]) + 's'
+# 
+#         def method(self, adom, kwargs):
+#             return self._get(
+#                 url=url.format(adom),
+#                 request_id=5723,
+#                 **kwargs
+#             )
+#         return name, method
+# 
+#     def generate_api_binding_methods(url):
+#         result = {}
+#         for api_method in FortiManagerMeta.DEFAULT_URL_METHODS:
+#             method_name, method = FortiManagerMeta.generate_api_binding_method(api_method, url)
+#             result[method_name] = method
+#         return result
+# 
+#     def __new__(meta, name, bases, dct):
+#         for url in FortiManagerMeta.API_URLS:
+#             dct.update(FortiManagerMeta.generate_api_binding_methods(url))
+#         pprint(dct)
+#         return super(FortiManagerMeta, meta).__new__(meta, name, bases, dct)
+# 
+# 
+# class TestMeta(Forti, metaclass=FortiManagerMeta):
+#     pass
 
-    '''
-    @login_required
-    def get_security_profiles(self, adom, **kwargs):
-        return self._get(
-            url='pm/config/adom/{}/obj/firewall'.format(adom),
-            request_id=5723,
-            **kwargs
-        )
-    '''
 
-    API_URLS = [
-        'pm/config/adom/{}/obj/firewall'
-    ]
-
-    def generate_api_binding_method(api_method, url):
-        name = '_'.join([api_method, url.split('/')[-1]]) + 's'
-
-        def method(self, adom, kwargs):
-            return self._get(
-                url=url.format(adom),
-                request_id=5723,
-                **kwargs
-            )
-        return name, method
-
-    def generate_api_binding_methods(url):
-        result = {}
-        for api_method in FortiManagerMeta.DEFAULT_URL_METHODS:
-            method_name, method = FortiManagerMeta.generate_api_binding_method(api_method, url)
-            result[method_name] = method
-        return result
-
-    def __new__(meta, name, bases, dct):
-        for url in FortiManagerMeta.API_URLS:
-            dct.update(FortiManagerMeta.generate_api_binding_methods(url))
-        pprint(dct)
-        return super(FortiManagerMeta, meta).__new__(meta, name, bases, dct)
-
-
-class TestMeta(Forti, metaclass=FortiManagerMeta):
-    pass
-
-
-class FortiManager(Forti, metaclass=FortiManagerMeta):
+class FortiManager(Forti):
     '''
     FortiManager class (SOAP/XML API)
     '''
