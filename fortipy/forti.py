@@ -1,6 +1,7 @@
 '''
 Forti
 Author: Philipp Schmitt <philipp.schmitt@post.lu>
+Edited by: Armin Schaare <armin-scha@hotmail.de>
 URLs: https://fndn.fortinet.net/index.php?/topic/52-an-incomplete-list-of-url-parameters-for-use-with-the-json-api/
 '''
 

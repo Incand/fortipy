@@ -1,3 +1,9 @@
+'''
+FortiManager
+Author: Armin Schaare <armin-scha@hotmail.de>
+URLs: https://fndn.fortinet.net/index.php?/topic/52-an-incomplete-list-of-url-parameters-for-use-with-the-json-api/
+'''
+
 class Error(Exception):
     def __init__(self, prefix, message):
         self._prefix = prefix
