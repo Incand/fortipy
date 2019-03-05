@@ -727,7 +727,7 @@ class FortiManager(Forti):
         return self._add(
             url='/pm/config/adom/{}/obj/webfilter/ftgd-local-rating'
                 .format(adom),
-            request_id=8183,
+            request_id=8184,
             data=data,
             **kwargs
         )
@@ -740,9 +740,22 @@ class FortiManager(Forti):
         return self._update(
             url='/pm/config/adom/{}/obj/webfilter/ftgd-local-rating'
                 .format(adom),
-            request_id=8184,
+            request_id=8185,
             data=data,
             **kwargs
+        )
+
+    @login_required
+    def delete_webfilter_ftgd_local_ratings(self, adom, data):
+        '''
+        Delete provided webfilter ftgd local ratings
+        params:
+            data {list[str]} -- A list of rating keys (urls) to delete
+        '''
+        return self._delete(
+            url=['/pm/config/adom/{}/obj/webfilter/ftgd-local-rating/{}'
+                 .format(adom, url) for url in data],
+            request_id=8186
         )
 
     @login_required

@@ -24,6 +24,14 @@ logger = logging.getLogger(__name__)
 TOKEN_TIMEOUT = 2
 
 
+def is_iterable(obj):
+    try:
+        _ = iter(obj)
+    except TypeError:
+        return False
+    return True
+
+
 def kwargs_to_json_handler(kwargs):
     '''
     Necessary for python args and API params name conflict resolution.
@@ -210,17 +218,55 @@ class Forti(object):
         )
 
     @login_required
-    def _delete(self, url, data, request_id=13, verbose=False):
+    def _delete(self, url, request_id=13, verbose=False):
         '''
-        Generic "delete" function
+        Perform a JSON request
+        :param method: Method to use (get/set/delete etc.)
+        :param url: Internal URL
+        :param \**kwargs: Additional params according to the FortiManager
+                          JSON API documentation and method used.
         '''
-        return self._request(
-            method='delete',
-            url=url,
-            request_id=request_id,
-            data=data,
-            verbose=verbose
-        )
+        try:
+            if is_iterable(url):
+                params = ({'url': _url} for _url in url)
+            else:
+                params = {'url': url}
+            # params.update(kwargs_to_json_handler(kwargs))
+            post_data = json.dumps({
+                'method': 'delete',
+                'params': list(params),
+                'id': request_id,
+                'verbose': verbose,
+                'jsonrpc': '2.0',
+                'session': self.token if self.token else 1
+                # 'skip': skip
+            })
+            logger.debug('POST DATA: {}'.format(post_data))
+            # Set verify to True to verify SSL certificates
+            r = requests.post(self.json_url, post_data, verify=self.verify)
+            if not r.ok:
+                logger.error('Erroneous response')
+                r.raise_for_status()
+            logger.debug(r.text)
+            res = r.json()
+            assert res['id'] == request_id, 'Request ID changed.'
+            return res
+        except requests.exceptions.SSLError as e:
+            logger.error(
+                'SSL Handshake failed: {}\n'
+                'You may want to disable SSL cert verification '
+                '[!!!INSECURE!!!]'.format(e)
+            )
+            raise e
+        # '''
+        # Generic "delete" function
+        # '''
+        # return self._request(
+        #     method='delete',
+        #     url=url,
+        #     request_id=request_id,
+        #     verbose=verbose
+        # )
 
     @login_required
     def _clone(self, url, request_id=11, verbose=False, skip=False, **kwargs):
