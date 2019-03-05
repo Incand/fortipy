@@ -720,6 +720,19 @@ class FortiManager(Forti):
         )
 
     @login_required
+    def add_webfilter_ftgd_local_ratings(self, adom, data, **kwargs):
+        '''
+        Add all provided webfilter ftgd local ratings
+        '''
+        return self._add(
+            url='/pm/config/adom/{}/obj/webfilter/ftgd-local-rating'
+                .format(adom),
+            request_id=8183,
+            data=data,
+            **kwargs
+        )
+
+    @login_required
     def update_webfilter_ftgd_local_ratings(self, adom, data, **kwargs):
         '''
         Update provided webfilter ftgd local ratings
