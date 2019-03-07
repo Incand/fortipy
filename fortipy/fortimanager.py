@@ -378,7 +378,7 @@ class FortiManager(Forti):
 
     @login_required
     @toggle_lock
-    def add_firewall_address(self, adom='root', data=None):
+    def add_firewall_addresses(self, adom='root', data=None):
         return self._add(
             url='pm/config/adom/{}/obj/firewall/address'.format(adom),
             data=data,
