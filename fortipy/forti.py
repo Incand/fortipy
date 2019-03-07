@@ -171,7 +171,7 @@ class Forti(object):
                     return [x for x in res['result'][0]['data']]
                 else:
                     # its a dict, just return it
-                    return res['result'][0]['data'] 
+                    return res['result'][0]['data']
             else:
                 logger.warning("unhandled case - don't know if thats possible")
         return res['result']['data']
@@ -221,8 +221,7 @@ class Forti(object):
     def _delete(self, url, request_id=13, verbose=False):
         '''
         Perform a JSON request
-        :param method: Method to use (get/set/delete etc.)
-        :param url: Internal URL
+        :param url: Internal URL(s)
         :param \**kwargs: Additional params according to the FortiManager
                           JSON API documentation and method used.
         '''

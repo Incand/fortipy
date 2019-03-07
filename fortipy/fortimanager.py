@@ -385,6 +385,15 @@ class FortiManager(Forti):
             request_id=6670
         )
 
+    @login_required
+    @toggle_lock
+    def set_firewall_addresses(self, adom='root', data=None):
+        return self._set(
+            url='pm/config/adom/{}/obj/firewall/address'.format(adom),
+            data=data,
+            request_id=6671
+        )
+
     # Update existing objects
     @login_required
     @toggle_lock
