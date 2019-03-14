@@ -468,6 +468,7 @@ class FortiManager(Forti):
         )
 
     @login_required
+    @toggle_lock
     def delete_firewall_addresses(self, adom, data):
         '''
         Delete provided webfilter ftgd local ratings
@@ -492,15 +493,43 @@ class FortiManager(Forti):
         )
 
     @login_required
-    def update_firewall_proxy_addresses(self, adom, data, **kwargs):
+    @toggle_lock
+    def set_firewall_proxy_addresses(self, adom, data, **kwargs):
         '''
         Set all firewall addresses defined for an ADOM
         '''
-        return self._update(
+        return self._set(
             url='pm/config/adom/{}/obj/firewall/proxy-address'.format(adom),
             data=data,
             request_id=5627,
             **kwargs
+        )
+
+    @login_required
+    @toggle_lock
+    def update_firewall_proxy_addresses(self, adom, data, **kwargs):
+        '''
+        Update all firewall addresses defined for an ADOM
+        '''
+        return self._update(
+            url='pm/config/adom/{}/obj/firewall/proxy-address'.format(adom),
+            data=data,
+            request_id=5628,
+            **kwargs
+        )
+
+    @login_required
+    @toggle_lock
+    def delete_firewall_proxy_addresses(self, adom, data):
+        '''
+        Delete provided webfilter ftgd local ratings
+        params:
+            data {list[str]} -- A list of rating keys (urls) to delete
+        '''
+        return self._delete(
+            url=['/pm/config/adom/{}/obj/firewall/proxy-address/{}'
+                 .format(adom, url) for url in data],
+            request_id=5629
         )
 
     @login_required
