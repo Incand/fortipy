@@ -11,6 +11,7 @@ from .forti import (login_required, Forti)
 import json
 import logging
 import sys
+from functools import wraps
 
 from pprint import pprint
 
@@ -33,6 +34,7 @@ def toggle_lock(f):
     Decorator that locks an ADOM before performing the requested
     action, and then unlocks it again
     '''
+    @wraps(f)
     def _wrapper(self, *args, **kwargs):
         '''
         Function to be applied on top of all deorated methods
@@ -853,6 +855,14 @@ class FortiManager(Forti):
             **kwargs
         )
 
+    @login_required
+    @toggle_lock
+    def install_package(self, adom, **kwargs):
+        '''
+        Copy and install a policy package to devices.
+        '''
+        self._exec(url="pm/config/adom/{}/securityconsole/install/package".format(adom), request_id=5611, **kwargs)
+
     # Workspace functions (FortiManager 5 Patch Release 3)
 
     @login_required
@@ -889,28 +899,5 @@ if __name__ == '__main__':
         verify=False
     )
 
-    resp = fm.get_firewall_address_groups(adom)
-
-    old_member = [
-        'BDFDEHAMDC100000LB05-10.9.7.2',
-        'BDFDEHAMDC500000LB06-10.9.7.3',
-        'INT-217.111.75.1-COLT-Router',
-        'INT-194.175.243.97-UUNet-Router',
-        'INT-221.232.147.92-WUH-ISP',
-        'DMZ-BDFCNWUHPC-Net-10.191.254.32',
-        'DMZ-BDFDEHAMA2142-192.168.199.132-Cisco-ExpressGW',
-        'GRP-FW-Module',
-        'DMZ-BDFCNWUH-10.191.254.154-DMZ03-C390-1',
-        'DMZ-BDFCNWUH-10.191.254.155-DMZ03-C390-2',
-        'DMZ-BDFDEHAM00000000LA02-192.168.198.45-FortiAnalyzer',
-        'DMZ-BDFDEHAMDC100000MA02-192.168.198.44-FortiManager',
-        'Net-192.168.0.0'
-    ]
-
-    resp = fm.update_firewall_addrgrp(
-        adom=adom,
-        addrgrp_name='GRP-NTP-Clients',
-        data={'member': old_member}
-    )
-
+    resp = fm.get_policy_packages()
     pprint(resp)

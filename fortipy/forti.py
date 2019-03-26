@@ -7,6 +7,7 @@ URLs: https://fndn.fortinet.net/index.php?/topic/52-an-incomplete-list-of-url-pa
 
 from __future__ import print_function
 from collections import namedtuple
+from functools import wraps
 import atexit
 import datetime
 import json
@@ -46,6 +47,7 @@ def commonerrorhandler(f):
     credentials or connection timeouts
     Credits: http://stackoverflow.com/a/7589537
     '''
+    @wraps(f)
     def wrapped(*args, **kw):
         '''
         Wrapper function
@@ -69,6 +71,7 @@ def login_required(f):
     Definition decorator for all function requiring an auth token
     Credit: http://stackoverflow.com/a/7590709
     '''
+    @wraps(f)
     def _wrapper(self, *args, **kwargs):
         '''
         Function to be applied on top of all decorated methods
@@ -257,15 +260,6 @@ class Forti(object):
                 '[!!!INSECURE!!!]'.format(e)
             )
             raise e
-        # '''
-        # Generic "delete" function
-        # '''
-        # return self._request(
-        #     method='delete',
-        #     url=url,
-        #     request_id=request_id,
-        #     verbose=verbose
-        # )
 
     @login_required
     def _clone(self, url, request_id=11, verbose=False, skip=False, **kwargs):
