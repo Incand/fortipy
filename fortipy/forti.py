@@ -14,7 +14,13 @@ import json
 import logging
 import requests
 
-from .exceptions import ConnectionError, LoginError
+
+from .utils import is_iterable, kwargs_to_json_handler
+
+from .exceptions import ConnectionError
+from .exceptions import LoginError
+from .exceptions import LockException
+from .exceptions import CommitException
 
 
 logging.basicConfig(level=logging.INFO)
@@ -23,22 +29,6 @@ logger = logging.getLogger(__name__)
 
 # How long a token should be considered valid (in minutes)
 TOKEN_TIMEOUT = 2
-
-
-def is_iterable(obj):
-    try:
-        _ = iter(obj)
-    except TypeError:
-        return False
-    return True
-
-
-def kwargs_to_json_handler(kwargs):
-    '''
-    Necessary for python args and API params name conflict resolution.
-    e.g. for table "get_used" -> "get used" or "filter_" -> "filter".
-    '''
-    return {k.strip('_').replace('_', ' '): v for k, v in kwargs.items()}
 
 
 def commonerrorhandler(f):
@@ -85,6 +75,32 @@ def login_required(f):
         else:
             self.login()
         return f(self, *args, **kwargs)
+    return _wrapper
+
+
+def toggle_lock(f):
+    '''
+    Decorator that locks an ADOM before performing the requested
+    action, and then unlocks it again
+    '''
+    @wraps(f)
+    def _wrapper(self, *args, **kwargs):
+        '''
+        Function to be applied on top of all deorated methods
+        '''
+        adom = kwargs['adom']
+        lock = self.lock_adom(adom=adom)
+        logger.debug(lock)
+        if lock['result'][0]['status']['code'] != 0:
+            raise LockException('Unable to lock ADOM')
+        res = f(self, *args, **kwargs)
+        commit = self.commit(adom=adom)
+        logger.debug(commit)
+        if commit['result'][0]['status']['code'] != 0:
+            raise CommitException('Unable to commit changes')
+        unlock = self.unlock_adom(adom=adom)
+        logger.debug(unlock)
+        return res
     return _wrapper
 
 
@@ -179,6 +195,7 @@ class Forti(object):
                 logger.warning("unhandled case - don't know if thats possible")
         return res['result']['data']
 
+    @toggle_lock
     @login_required
     def _add(self, url, data, request_id=12, verbose=False, **kwargs):
         '''
@@ -193,6 +210,7 @@ class Forti(object):
             **kwargs
         )
 
+    @toggle_lock
     @login_required
     def _set(self, url, data, request_id=14, verbose=False, **kwargs):
         '''
@@ -207,6 +225,7 @@ class Forti(object):
             **kwargs
         )
 
+    @toggle_lock
     @login_required
     def _update(self, url, data, request_id=15, verbose=False):
         '''
@@ -220,6 +239,7 @@ class Forti(object):
             verbose=verbose
         )
 
+    @toggle_lock
     @login_required
     def _delete(self, url, request_id=13, verbose=False):
         '''
@@ -261,6 +281,7 @@ class Forti(object):
             )
             raise e
 
+    @toggle_lock
     @login_required
     def _clone(self, url, request_id=11, verbose=False, skip=False, **kwargs):
         '''
@@ -274,6 +295,7 @@ class Forti(object):
             **kwargs
         )
 
+    @toggle_lock
     @login_required
     def _move(self, url, request_id=11, verbose=False, skip=False, **kwargs):
         '''
@@ -298,6 +320,8 @@ class Forti(object):
             verbose=verbose,
             **kwargs
         )
+
+    def _logged_in_exec
 
     @commonerrorhandler
     def login(self, username=None, password=None):
@@ -335,3 +359,34 @@ class Forti(object):
         res = self._exec(url='sys/logout', request_id=3)
         self.token = None
         return res
+
+    # Workspace functions (FortiManager 5 Patch Release 3)
+    @login_required
+    def lock_adom(self, adom):
+        '''
+        Lock an ADOM
+        '''
+        return self._exec(
+            url="pm/config/adom/{}/_workspace/lock".format(adom),
+            request_id=5612
+        )
+
+    @login_required
+    def unlock_adom(self, adom):
+        '''
+        Unclock an ADOM
+        '''
+        return self._exec(
+            url="pm/config/adom/{}/_workspace/unlock".format(adom),
+            request_id=5613
+        )
+
+    @login_required
+    def commit(self, adom):
+        '''
+        Commit changes made to ADOM
+        '''
+        return self._exec(
+            url="pm/config/adom/{}/_workspace/commit".format(adom),
+            request_id=5614
+        )
