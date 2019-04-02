@@ -1,7 +1,5 @@
 from __future__ import print_function
-from pprint import pprint
 import logging
-from functools import wraps
 import sys
 
 from fortipy.forti import Forti
@@ -12,14 +10,6 @@ logger = logging.getLogger(__name__)
 
 
 class SecurityConsole(Forti):
-    def error_handler(func):
-        @wraps(func)
-        def wrapper(*args, **kwargs):
-            res = func(*args, **kwargs)
-            pprint(res)
-            return res
-        return wrapper
-
     def abort(self, adom):
         '''
         Abort and cancel a security console task.
