@@ -89,19 +89,36 @@ def toggle_lock(f):
         Function to be applied on top of all deorated methods
         '''
         adom = kwargs['adom']
-        lock = self.lock_adom(adom=adom)
-        logger.debug(lock)
-        if lock['result'][0]['status']['code'] != 0:
-            raise LockException('Unable to lock ADOM')
+        self.lock_adom(adom=adom)
+
         res = f(self, *args, **kwargs)
-        commit = self.commit(adom=adom)
-        logger.debug(commit)
-        if commit['result'][0]['status']['code'] != 0:
-            raise CommitException('Unable to commit changes')
-        unlock = self.unlock_adom(adom=adom)
-        logger.debug(unlock)
+
+        self.commit(adom=adom)
+        self.unlock_adom(adom=adom)
+
         return res
     return _wrapper
+
+
+def handle_fm_API_errors(f):
+    @wraps(f)
+    def _wrapper(self, *args, **kwargs):
+        response = f(*args, **kwargs)
+        status = response['result'][0]['status']
+        errcode = status['code']
+        if errcode != 0:
+            message = status['message']
+            logger.debug('Error in API response: {}'.format(response))
+            raise FortiManagerAPIError(errcode, message)
+        return response
+    return _wrapper
+
+
+class FortiManagerAPIError(Exception):
+    def __init__(self, response):
+        status = response['result'][0]['status']
+        self.errcode = status['code']
+        self.message = status['message']
 
 
 class Forti(object):
@@ -120,6 +137,7 @@ class Forti(object):
         self._token_age = None
         self.login()
 
+    @handle_fm_API_errors
     def _request(self, method, url, request_id=1, verbose=False, **kwargs):
         '''
         Perform a JSON request
@@ -321,7 +339,9 @@ class Forti(object):
             **kwargs
         )
 
-    def _logged_in_exec
+    @login_required
+    def _exec_logged_in(self, *args, **kwargs):
+        return self._exec(*args, **kwargs)
 
     @commonerrorhandler
     def login(self, username=None, password=None):
@@ -350,43 +370,39 @@ class Forti(object):
         self._token_age = datetime.datetime.now()
         return self.token
 
-    @login_required
     def logout(self):
         '''
         Log out, invalidate the session token
         '''
         logger.debug('LOGOUT REQUEST')
-        res = self._exec(url='sys/logout', request_id=3)
+        res = self._exec_logged_in(url='sys/logout', request_id=3)
         self.token = None
         return res
 
     # Workspace functions (FortiManager 5 Patch Release 3)
-    @login_required
     def lock_adom(self, adom):
         '''
         Lock an ADOM
         '''
-        return self._exec(
+        return self._exec_logged_in(
             url="pm/config/adom/{}/_workspace/lock".format(adom),
             request_id=5612
         )
 
-    @login_required
     def unlock_adom(self, adom):
         '''
         Unclock an ADOM
         '''
-        return self._exec(
+        return self._exec_logged_in(
             url="pm/config/adom/{}/_workspace/unlock".format(adom),
             request_id=5613
         )
 
-    @login_required
     def commit(self, adom):
         '''
         Commit changes made to ADOM
         '''
-        return self._exec(
+        return self._exec_logged_in(
             url="pm/config/adom/{}/_workspace/commit".format(adom),
             request_id=5614
         )
