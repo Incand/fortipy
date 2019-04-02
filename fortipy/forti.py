@@ -105,27 +105,32 @@ def handle_fm_API_errors(f):
     def _wrapper(self, *args, **kwargs):
         response = f(*args, **kwargs)
         status = response['result'][0]['status']
-        errcode = status['code']
-        if errcode != 0:
-            message = status['message']
+        if status['code'] != 0:
             logger.debug('Error in API response: {}'.format(response))
-            raise FortiManagerAPIError(errcode, message)
+            raise FortiManagerAPIError.from_status(status)
         return response
     return _wrapper
 
 
 class FortiManagerAPIError(Exception):
-    def __init__(self, response):
+    def __init__(self, errcode, message):
+        self.errcode = errcode
+        self.message = message
+
+    @classmethod
+    def from_status(cls, status):
+        return cls(status['code'], status['message'])
+
+    @classmethod
+    def from_response(cls, response):
         status = response['result'][0]['status']
-        self.errcode = status['code']
-        self.message = status['message']
+        return cls.from_status(status)
 
 
 class Forti(object):
     '''
     Forti class (JSON API)
     '''
-
     def __init__(self, host, port=443, username=None, password=None,
                  verify=True):
         self.json_url = 'https://{}:{}/jsonrpc'.format(host, port)
