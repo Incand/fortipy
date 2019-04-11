@@ -102,7 +102,7 @@ def toggle_lock(f):
 
 def handle_fm_API_errors(f):
     @wraps(f)
-    def _wrapper(self, *args, **kwargs):
+    def _wrapper(*args, **kwargs):
         response = f(*args, **kwargs)
         status = response['result'][0]['status']
         if status['code'] != 0:
@@ -123,8 +123,7 @@ class FortiManagerAPIError(Exception):
 
     @classmethod
     def from_response(cls, response):
-        status = response['result'][0]['status']
-        return cls.from_status(status)
+        return cls.from_status(response['result'][0]['status'])
 
 
 class Forti(object):
@@ -332,13 +331,14 @@ class Forti(object):
             **kwargs
         )
 
-    def _exec(self, url, request_id=11, verbose=False, skip=False, **kwargs):
+    def _exec(self, url, data, request_id=11, verbose=False, skip=False, **kwargs):
         '''
         Generic "exec" function
         '''
         return self._request(
             method='exec',
             url=url,
+            data=data,
             request_id=request_id,
             verbose=verbose,
             **kwargs
