@@ -5,8 +5,10 @@ import sys
 from fortipy.forti import Forti
 
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
+
+logging.getLogger('fortipy.forti').setLevel(logging.DEBUG)
 
 
 class SecurityConsole(Forti):
@@ -43,11 +45,15 @@ class SecurityConsole(Forti):
         '''
         Installs a device.
         '''
+        data = {
+            'adom': adom,
+            'scope': scope,
+            'flags': flags or ['none'],
+            **kwargs
+        }
         return self._exec_logged_in(
             url="/securityconsole/install/device",
-            adom=adom,
-            scope=scope,
-            flags=flags,
+            data=data,
             **kwargs
         )
 
@@ -156,12 +162,27 @@ class SecurityConsole(Forti):
 
 
 if __name__ == '__main__':
+    from . import FortiManager
+
+    from pprint import pprint
+
+    class SecFM(FortiManager, SecurityConsole):
+        pass
+
     adom = sys.argv[1]
-    sc = SecurityConsole(
+    sc = SecFM(
         host='fm-bdf.crocodial.de',
         username='techuser',
         password='0d3sSa!0',
         verify=False
     )
 
-    sc.abort(adom=adom)
+    resp = sc.get_devices(adom, filter_=['desc', 'like', 'IPROXY%'])
+    scope = []
+    for device in resp:
+        vdom = device['vdom']
+        assert len(vdom) == 1
+        device_id = {'name': device['name'], 'vdom': vdom[0]['name']}
+        scope.append(device_id)
+    pprint(scope)
+    sc.install_device(adom, scope=scope, flags=['preview'], dev_rev_comments='test')
