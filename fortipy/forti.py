@@ -345,8 +345,8 @@ class Forti(object):
         )
 
     @login_required
-    def _exec_logged_in(self, *args, **kwargs):
-        return self._exec(*args, **kwargs)
+    def _exec_logged_in(self, url, data, *args, **kwargs):
+        return self._exec(url, data, *args, **kwargs)
 
     @commonerrorhandler
     def login(self, username=None, password=None):
@@ -380,7 +380,7 @@ class Forti(object):
         Log out, invalidate the session token
         '''
         logger.debug('LOGOUT REQUEST')
-        res = self._exec_logged_in(url='sys/logout', request_id=3)
+        res = self._exec_logged_in(url='sys/logout', data={}, request_id=3)
         self.token = None
         return res
 

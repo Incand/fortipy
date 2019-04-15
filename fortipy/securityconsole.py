@@ -8,7 +8,7 @@ from fortipy.forti import Forti
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
-logging.getLogger('fortipy.forti').setLevel(logging.DEBUG)
+# logging.getLogger('fortipy.forti').setLevel(logging.DEBUG)
 
 
 class SecurityConsole(Forti):
@@ -24,9 +24,11 @@ class SecurityConsole(Forti):
         '''
         return self._exec_logged_in(
             url="/securityconsole/assign/package",
-            pkg=package,
-            target=target,
-            flags=flags
+            data={
+                'pkg': package,
+                'target': target,
+                'flags': flags or ['none']
+            }
         )
 
     def import_dev_objects(self, adom, name, dst_name, **kwargs):
@@ -35,26 +37,26 @@ class SecurityConsole(Forti):
         '''
         return self._exec_logged_in(
             url="/securityconsole/import/dev/objs",
-            adom=adom,
-            name=name,
-            dst_name=dst_name,
-            **kwargs
+            data={
+                'adom': adom,
+                'name': name,
+                'dst_name': dst_name,
+                **kwargs
+            }
         )
 
     def install_device(self, adom, scope, flags=None, **kwargs):
         '''
         Installs a device.
         '''
-        data = {
-            'adom': adom,
-            'scope': scope,
-            'flags': flags or ['none'],
-            **kwargs
-        }
         return self._exec_logged_in(
             url="/securityconsole/install/device",
-            data=data,
-            **kwargs
+            data={
+                'adom': adom,
+                'scope': scope,
+                'flags': flags or ['none'],
+                **kwargs
+            }
         )
 
     def install_package(self, adom, package, scope, flags=None, **kwargs):
@@ -63,11 +65,13 @@ class SecurityConsole(Forti):
         '''
         return self._exec_logged_in(
             url="/securityconsole/install/package",
-            adom=adom,
-            pkg=package,
-            scope=scope,
-            flags=flags,
-            **kwargs
+            data={
+                'adom': adom,
+                'pkg': package,
+                'scope': scope,
+                'flags': flags or ['none'],
+                **kwargs
+            }
         )
 
     def generate_install_preview(self, adom, device, flags=None, vdoms=None):
@@ -76,10 +80,12 @@ class SecurityConsole(Forti):
         '''
         return self._exec_logged_in(
             url="/securityconsole/install/preview",
-            adom=adom,
-            device=device,
-            flags=flags,
-            vdoms=vdoms
+            data={
+                'adom': adom,
+                'device': device,
+                'flags': flags or ['none'],
+                'vdoms': vdoms or []
+            }
         )
 
     def cancel_package_install(self, adom):
@@ -89,7 +95,8 @@ class SecurityConsole(Forti):
         (install_package method).
         '''
         return self._exec_logged_in(
-            url="/securityconsole/package/cancel/install", adom=adom
+            url="/securityconsole/package/cancel/install",
+            data={'adom': adom}
         )
 
     def clone_package(self, adom, package, scope, dst_name, dst_parent=None):
@@ -98,11 +105,13 @@ class SecurityConsole(Forti):
         '''
         return self._exec_logged_in(
             url="/securityconsole/package/clone",
-            adom=adom,
-            pkg=package,
-            scope=scope,
-            dst_name=dst_name,
-            dst_parent=dst_parent
+            data={
+                'adom': adom,
+                'pkg': package,
+                'scope': scope,
+                'dst_name': dst_name,
+                'dst_parent': dst_parent
+            }
         )
 
     def commit_package(self, adom, scope):
@@ -112,20 +121,21 @@ class SecurityConsole(Forti):
         '''
         return self._exec_logged_in(
             url="/securityconsole/package/commit",
-            adom=adom,
-            scope=scope
+            data={'adom': adom, 'scope': scope}
         )
 
-    def move_package(self, adom, package, dst_name, dst_parent=None):
+    def move_package(self, adom, package, dst_name='', dst_parent=''):
         '''
         Move and/or rename a policy package within the same ADOM.
         '''
         return self._exec_logged_in(
             url="/securityconsole/package/move",
-            adom=adom,
-            package=package,
-            dst_name=dst_name,
-            dst_parent=dst_parent
+            data={
+                'adom': adom,
+                'package': package,
+                'dst_name': dst_name,
+                'dst_parent': dst_parent
+            }
         )
 
     def preview_result(self, adom, device):
@@ -134,8 +144,7 @@ class SecurityConsole(Forti):
         '''
         return self._exec_logged_in(
             url="/securityconsole/preview/result",
-            adom=adom,
-            device=device
+            data={'adom': adom, 'device': device}
         )
 
     def reinstall_package(self, adom, target, flags=None):
@@ -144,9 +153,11 @@ class SecurityConsole(Forti):
         '''
         return self._exec_logged_in(
             url="/securityconsole/reinstall/package",
-            adom=adom,
-            target=target,
-            flags=flags
+            data={
+                'adom': adom,
+                'target': target,
+                'flags': flags or ['none']
+            }
         )
 
     def sign_certificate_template(self, adom, scope, template):
@@ -155,10 +166,18 @@ class SecurityConsole(Forti):
         '''
         return self._exec_logged_in(
             url="/securityconsole/sign/certificate/template",
-            adom=adom,
-            scope=scope,
-            template=template
+            data={
+                'adom': adom,
+                'scope': scope,
+                'template': template
+            }
         )
+
+    def get_task(self, id_):
+        return self._get(url='/task/task/{}'.format(id_))
+
+    def get_tasks(self, **kwargs):
+        return self._get(url='/task/task', **kwargs)
 
 
 if __name__ == '__main__':
@@ -166,11 +185,8 @@ if __name__ == '__main__':
 
     from pprint import pprint
 
-    class SecFM(FortiManager, SecurityConsole):
-        pass
-
     adom = sys.argv[1]
-    sc = SecFM(
+    sc = FortiManager(
         host='fm-bdf.crocodial.de',
         username='techuser',
         password='0d3sSa!0',
@@ -185,4 +201,7 @@ if __name__ == '__main__':
         device_id = {'name': device['name'], 'vdom': vdom[0]['name']}
         scope.append(device_id)
     pprint(scope)
-    sc.install_device(adom, scope=scope, flags=['preview'], dev_rev_comments='test')
+    res = sc.install_device(adom, scope=scope, flags=['preview'], dev_rev_comments='test')
+    pprint(res)
+    task_id = res['result'][0]['data']['task']
+    pprint(sc.get_tasks(filter_=['user', '==', 'techuser']))

@@ -7,7 +7,8 @@ URLs: https://fndn.fortinet.net/index.php?/topic/52-an-incomplete-list-of-url-pa
 
 from __future__ import absolute_import
 from __future__ import print_function
-from .forti import Forti, SecurityConsole, login_required, toggle_lock
+from .forti import Forti, login_required, toggle_lock
+from .securityconsole import SecurityConsole
 import json
 import logging
 import sys
@@ -19,7 +20,7 @@ logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 
-class FortiManager(Forti, SecurityConsole):
+class FortiManager(SecurityConsole):
     '''
     FortiManager class (SOAP/XML API)
     '''
