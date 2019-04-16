@@ -718,21 +718,6 @@ class FortiManager(SecurityConsole):
 
     @login_required
     @toggle_lock
-    def install_package(self, adom, package, scope, **kwargs):
-        '''
-        Copy and install a policy package to devices.
-        '''
-        return self._exec(
-            url="pm/config/adom/{}/securityconsole/install/package".format(adom),
-            adom=adom,
-            pkg=package,
-            scope=scope,
-            request_id=5611,
-            **kwargs
-        )
-
-    @login_required
-    @toggle_lock
     def commit_package(self, adom, scope):
         '''
         Install policies to device from preview cache. Only to be used when a

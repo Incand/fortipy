@@ -2,7 +2,7 @@ from __future__ import print_function
 import logging
 import sys
 
-from fortipy.forti import Forti
+from fortipy.forti import Forti, toggle_lock
 
 
 logging.basicConfig(level=logging.DEBUG)
