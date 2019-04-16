@@ -180,6 +180,21 @@ class SecurityConsole(Forti):
         return self._get(url='/task/task', **kwargs)
 
 
+def test_policy_install(fm):
+    resp = fm.get_devices(adom, filter_=['desc', 'like', 'IPROXY%'])
+    scope = []
+    for device in resp:
+        vdom = device['vdom']
+        assert len(vdom) == 1
+        device_id = {'name': device['name'], 'vdom': vdom[0]['name']}
+        scope.append(device_id)
+    pprint(scope)
+    res = fm.install_device(adom, scope=scope, flags=['preview'], dev_rev_comments='test')
+    pprint(res)
+    task_id = res['result'][0]['data']['task']
+    pprint(fm.get_tasks(filter_=['user', '==', 'techuser']))
+
+
 if __name__ == '__main__':
     from . import FortiManager
 
@@ -193,15 +208,28 @@ if __name__ == '__main__':
         verify=False
     )
 
-    resp = sc.get_devices(adom, filter_=['desc', 'like', 'IPROXY%'])
-    scope = []
-    for device in resp:
-        vdom = device['vdom']
-        assert len(vdom) == 1
-        device_id = {'name': device['name'], 'vdom': vdom[0]['name']}
-        scope.append(device_id)
+    devices = sc.get_devices(
+        adom=adom,
+        filter_=['desc', 'like', 'IPROXY%']
+    )
+
+    print('Devices query response:')
+    pprint(devices)
+
+    scope = [
+        {
+            'name': dev['name'],
+            'vdom': dev['vdom'][0]['name']
+        }
+        for dev in devices
+    ]
+
+    print('Generated Scope:')
     pprint(scope)
-    res = sc.install_device(adom, scope=scope, flags=['preview'], dev_rev_comments='test')
-    pprint(res)
+
+    res = sc.reinstall_package(
+        adom,
+        flags=['generate_rev'],
+        target=scope
+    )
     task_id = res['result'][0]['data']['task']
-    pprint(sc.get_tasks(filter_=['user', '==', 'techuser']))

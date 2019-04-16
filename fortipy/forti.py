@@ -249,7 +249,7 @@ class Forti(object):
 
     @toggle_lock
     @login_required
-    def _update(self, url, data, request_id=15, verbose=False):
+    def _update(self, url, data, request_id=15, verbose=False, **kwargs):
         '''
         Generic "update" method
         '''
@@ -263,7 +263,7 @@ class Forti(object):
 
     @toggle_lock
     @login_required
-    def _delete(self, url, request_id=13, verbose=False):
+    def _delete(self, url, request_id=13, verbose=False, **kwargs):
         '''
         Perform a JSON request
         :param url: Internal URL(s)
@@ -331,7 +331,7 @@ class Forti(object):
             **kwargs
         )
 
-    def _exec(self, url, data, request_id=11, verbose=False, skip=False, **kwargs):
+    def _exec(self, url, data=None, request_id=11, verbose=False, skip=False, **kwargs):
         '''
         Generic "exec" function
         '''
@@ -345,8 +345,8 @@ class Forti(object):
         )
 
     @login_required
-    def _exec_logged_in(self, url, data, *args, **kwargs):
-        return self._exec(url, data, *args, **kwargs)
+    def _exec_logged_in(self, url, data=None, *args, **kwargs):
+        return self._exec(url, data=data, *args, **kwargs)
 
     @commonerrorhandler
     def login(self, username=None, password=None):
