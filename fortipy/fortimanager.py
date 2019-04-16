@@ -253,6 +253,7 @@ class FortiManager(SecurityConsole):
             url='pm/config/adom/{}/pkg/{}/firewall/policy'.format(
                 adom, policy_pkg
             ),
+            adom=adom,
             data=data,
             request_id=666
         )
@@ -263,6 +264,7 @@ class FortiManager(SecurityConsole):
     def add_interface(self, adom='root', data=None):
         return self._add(
             url='pm/config/adom/{}/obj/dynamic/interface'.format(adom),
+            adom=adom,
             data=data,
             request_id=667,
         )
@@ -270,6 +272,7 @@ class FortiManager(SecurityConsole):
     def add_firewall_addresses(self, adom='root', data=None):
         return self._add(
             url='pm/config/adom/{}/obj/firewall/address'.format(adom),
+            adom=adom,
             data=data,
             request_id=6670
         )
@@ -286,6 +289,7 @@ class FortiManager(SecurityConsole):
             url='pm/config/adom/{}/obj/firewall/addrgrp/{}'.format(
                 adom, addrgrp_name
             ),
+            adom=adom,
             data=data,
             request_id=66700
         )
@@ -622,6 +626,7 @@ class FortiManager(SecurityConsole):
         return self._add(
             url='/pm/config/adom/{}/obj/webfilter/ftgd-local-rating'
                 .format(adom),
+            adom=adom,
             request_id=8184,
             data=data,
             **kwargs
@@ -634,6 +639,7 @@ class FortiManager(SecurityConsole):
         return self._update(
             url='/pm/config/adom/{}/obj/webfilter/ftgd-local-rating'
                 .format(adom),
+            adom=adom,
             request_id=8185,
             data=data,
             **kwargs
@@ -648,6 +654,7 @@ class FortiManager(SecurityConsole):
         return self._delete(
             url=['/pm/config/adom/{}/obj/webfilter/ftgd-local-rating/{}'
                  .format(adom, url) for url in data],
+            adom=adom,
             request_id=8186
         )
 
