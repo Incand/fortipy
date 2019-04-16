@@ -147,7 +147,7 @@ class SecurityConsole(Forti):
             data={'adom': adom, 'device': device}
         )
 
-    def reinstall_package(self, adom, target, flags=None):
+    def reinstall_package(self, adom, package, scope=None, flags=None):
         '''
         Re-install a policy package that had been previously installed.
         '''
@@ -155,7 +155,8 @@ class SecurityConsole(Forti):
             url="/securityconsole/reinstall/package",
             data={
                 'adom': adom,
-                'target': target,
+                'pkg': package,
+                'scope': scope,
                 'flags': flags or ['none']
             }
         )
@@ -195,12 +196,18 @@ def test_policy_install(fm):
     pprint(fm.get_tasks(filter_=['user', '==', 'techuser']))
 
 
-if __name__ == '__main__':
-    from . import FortiManager
+def get_iproxy_scope(policy_package, iproxy_device_names):
+    return [
+        mem
+        for mem in policy_package.get('scope member', [])
+        if mem['name'] in iproxy_device_names
+    ]
 
+
+def install_policy_iproxy(adom):
+    from . import FortiManager
     from pprint import pprint
 
-    adom = sys.argv[1]
     sc = FortiManager(
         host='fm-bdf.crocodial.de',
         username='techuser',
@@ -208,28 +215,76 @@ if __name__ == '__main__':
         verify=False
     )
 
-    devices = sc.get_devices(
+    iproxy_devices = sc.get_devices(
         adom=adom,
         filter_=['desc', 'like', 'IPROXY%']
     )
+    iproxy_device_names_set = {dev['name'] for dev in iproxy_devices}
+    print(len(iproxy_device_names_set))
 
-    print('Devices query response:')
-    pprint(devices)
+    polpkgs = sc.get_policy_packages(adom)
+    pprint(polpkgs)
 
-    scope = [
-        {
-            'name': dev['name'],
-            'vdom': dev['vdom'][0]['name']
-        }
-        for dev in devices
-    ]
+    for pp in polpkgs:
+        iproxy_scope = get_iproxy_scope(pp, iproxy_device_names_set)
+        if len(iproxy_scope) == 0:
+            continue
+        sc.reinstall_package(
+            adom,
+            pp['name'],
+            iproxy_scope
+        )
 
-    print('Generated Scope:')
-    pprint(scope)
+    # compiled_reinstall_params = []
+    # for pp in polpkgs:
+    #     pp_iproxy_devs = get_iproxy_devs(pp, iproxy_device_names_set)
+    #     if not pp_iproxy_devs:
+    #         continue
+    #     
+    #     compiled_reinstall_params.append({
 
-    res = sc.reinstall_package(
-        adom,
-        flags=['generate_rev'],
-        target=scope
-    )
-    task_id = res['result'][0]['data']['task']
+    #     })
+# 
+    # for params in compiled_reinstall_params:
+    #     sc.reinstall_package(**params)
+# 
+# 
+    # print('Policy Packages')
+    # # pprint(polpkgs)
+    # pprint([pp['name'] for pp in polpkgs])
+# 
+    # devices = sc.get_devices(
+    #     adom=adom,
+    #     filter_=['desc', 'like', 'IPROXY%']
+    # )
+# 
+    # for pp in polpkgs:
+    #     handle_policy_package(pp)
+# 
+# 
+    # # print('Devices query response:')
+    # pprint(devices)
+
+    # scope = [
+    #     {
+    #         'name': dev['name'],
+    #         'vdom': dev['vdom'][0]['name']
+    #     }
+    #     for dev in devices
+    # ]
+# 
+    # print('Generated Scope:')
+    # pprint(scope)
+
+    # res = sc.reinstall_package(
+    #     adom,
+    #     flags=['generate_rev'],
+    #     target=scope
+    # )
+    # task_id = res['result'][0]['data']['task']
+
+
+if __name__ == '__main__':
+    adom = sys.argv[1]
+
+    install_policy_iproxy(adom)

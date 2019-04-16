@@ -745,6 +745,10 @@ class FortiManager(SecurityConsole):
             request_id=5612
         )
 
+    @login_required
+    def get_policy_package(self, adom, name, **kwargs):
+        return self._get(url="pm/pkg/adom/{}/{}".format(adom, name), **kwargs)
+
 
 if __name__ == '__main__':
     host = sys.argv[1]
