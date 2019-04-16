@@ -280,6 +280,7 @@ class FortiManager(SecurityConsole):
     def set_firewall_addresses(self, adom='root', data=None):
         return self._set(
             url='pm/config/adom/{}/obj/firewall/address'.format(adom),
+            adom=adom,
             data=data,
             request_id=6671
         )
@@ -343,6 +344,7 @@ class FortiManager(SecurityConsole):
         '''
         return self._update(
             url='pm/config/adom/{}/obj/firewall/address'.format(adom),
+            adom=adom,
             data=data,
             request_id=5624,
             **kwargs
@@ -357,6 +359,7 @@ class FortiManager(SecurityConsole):
         return self._delete(
             url=['/pm/config/adom/{}/obj/firewall/address/{}'
                  .format(adom, url) for url in data],
+            adom=adom,
             request_id=5625
         )
 
@@ -376,6 +379,7 @@ class FortiManager(SecurityConsole):
         '''
         return self._set(
             url='pm/config/adom/{}/obj/firewall/proxy-address'.format(adom),
+            adom=adom,
             data=data,
             request_id=5627,
             **kwargs
@@ -387,6 +391,7 @@ class FortiManager(SecurityConsole):
         '''
         return self._update(
             url='pm/config/adom/{}/obj/firewall/proxy-address'.format(adom),
+            adom=adom,
             data=data,
             request_id=5628,
             **kwargs
@@ -401,6 +406,7 @@ class FortiManager(SecurityConsole):
         return self._delete(
             url=['/pm/config/adom/{}/obj/firewall/proxy-address/{}'
                  .format(adom, url) for url in data],
+            adom=adom,
             request_id=5629
         )
 
@@ -439,6 +445,7 @@ class FortiManager(SecurityConsole):
         '''
         return self._update(
             url='pm/config/adom/{}/obj/firewall/addrgrp'.format(adom),
+            adom=adom,
             data=data,
             request_id=56228,
             **kwargs
@@ -460,6 +467,7 @@ class FortiManager(SecurityConsole):
         '''
         return self._update(
             url='pm/config/adom/{}/obj/firewall/proxy-addrgrp'.format(adom),
+            adom=adom,
             data=data,
             request_id=56230,
             **kwargs
