@@ -757,5 +757,8 @@ if __name__ == '__main__':
         verify=False
     )
 
-    resp = fm.get_devices(adom, filter_=['desc', 'like', 'IPROXY%'])
-    pprint([dev['desc'] for dev in resp])
+    res = fm.get_admin_users()
+    for admin in res:
+        print('')
+        for key in ['userid', 'profileid', 'radius_server']:
+            print(': '.join([key, admin[key]]))
