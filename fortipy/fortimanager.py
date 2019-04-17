@@ -696,6 +696,16 @@ class FortiManager(SecurityConsole):
             **kwargs
         )
 
+    def get_admin_user(self, userid, **kwargs):
+        '''
+        Get a list of all admin users
+        '''
+        return self._get(
+            url='cli/global/system/admin/user/{}'.format(userid),
+            request_id=9125,
+            **kwargs
+        )
+
     def get_admin_users(self, **kwargs):
         '''
         Get a list of all admin users
