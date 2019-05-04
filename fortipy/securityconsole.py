@@ -147,7 +147,7 @@ class SecurityConsole(Forti):
             data={'adom': adom, 'device': device}
         )
 
-    def reinstall_package(self, adom, package, scope=None, flags=None):
+    def reinstall_package(self, adom, target, flags=None):
         '''
         Re-install a policy package that had been previously installed.
         '''
@@ -155,8 +155,7 @@ class SecurityConsole(Forti):
             url="/securityconsole/reinstall/package",
             data={
                 'adom': adom,
-                'pkg': package,
-                'scope': scope,
+                'target': target,
                 'flags': flags or ['none']
             }
         )
