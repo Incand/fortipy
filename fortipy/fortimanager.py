@@ -485,6 +485,111 @@ class FortiManager(SecurityConsole):
             **kwargs
         )
 
+    ############################################################################
+    # Firewall Wildcard FQDN
+    ############################################################################
+
+    def get_firewall_wildcard_fqdn(self, adom, name, **kwargs):
+        '''
+        Get a firewall wildcard fqdn by its name
+        '''
+        return self._get(
+            url='pm/config/adom/{}/obj/firewall/wildcard-fqdn/custom/{}'
+                .format(adom, name),
+            request_id=49837,
+            **kwargs
+        )
+
+    def get_firewall_wildcard_fqdns(self, adom, **kwargs):
+        '''
+        Get all firewall wildcard fqdns of an ADOM
+        '''
+        return self._get(
+            url='pm/config/adom/{}/obj/firewall/wildcard-fqdn/custom'
+                .format(adom),
+            request_id=49838,
+            **kwargs
+        )
+
+    def add_firewall_wildcard_fqdns(self, adom, data, **kwargs):
+        '''
+        Add given wildcard fqdns to an ADOM if their IDs don't exist already
+        '''
+        return self._add(
+            url='pm/config/adom/{}/obj/firewall/wildcard-fqdn/custom'
+                .format(adom),
+            adom=adom,
+            data=data,
+            request_id=49839,
+            **kwargs
+        )
+
+    def set_firewall_wildcard_fqdns(self, adom, data, **kwargs):
+        '''
+        Set all firewall wildcard fqdns defined for an ADOM
+        '''
+        return self._set(
+            url='pm/config/adom/{}/obj/firewall/wildcard-fqdn/custom'
+                .format(adom),
+            adom=adom,
+            data=data,
+            request_id=49840,
+            **kwargs
+        )
+
+    def update_firewall_wildcard_fqdns(self, adom, data, **kwargs):
+        '''
+        Update all firewall wildcard fqdns defined for an ADOM
+        '''
+        return self._update(
+            url='pm/config/adom/{}/obj/firewall/wildcard-fqdn/custom'
+                .format(adom),
+            adom=adom,
+            data=data,
+            request_id=49841,
+            **kwargs
+        )
+
+    def delete_firewall_wildcard_fqdns(self, adom, data):
+        '''
+        Deletes all firewall wildcard fqdns defined for an ADOM
+        '''
+        
+        return self._delete(
+            url=['/pm/config/adom/{}/obj/firewall/proxy-address/{}'
+                 .format(adom, url) for url in data],
+            adom=adom,
+            request_id=49842
+        )
+
+    def get_firewall_wildcard_fqdn_groups(self, adom, **kwargs):
+        '''
+        Get all firewall wildcard fqdn groups defined for an ADOM
+        '''
+        return self._get(
+            url='pm/config/adom/{}/obj/firewall/wildcard-fqdn/group'
+                .format(adom),
+            request_id=49843,
+            **kwargs
+        )
+
+    def get_firewall_wildcard_fqdn_groups(self, adom, data, **kwargs):
+        '''
+        Update firewall wildcard fqdn groups defined for an ADOM
+        '''
+        return self._update(
+            url='pm/config/adom/{}/obj/firewall/wildcard-fqdn/group'
+                .format(adom),
+            adom=adom,
+            data=data,
+            request_id=49844,
+            **kwargs
+        )
+
+    ############################################################################
+    # Misc.
+    ############################################################################
+
     def get_interfaces(self, adom, **kwargs):
         '''
         Get all interfaces defined for an ADOM
