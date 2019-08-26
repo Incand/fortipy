@@ -269,22 +269,6 @@ class FortiManager(SecurityConsole):
             request_id=667,
         )
 
-    def add_firewall_addresses(self, adom='root', data=None):
-        return self._add(
-            url='pm/config/adom/{}/obj/firewall/address'.format(adom),
-            adom=adom,
-            data=data,
-            request_id=6670
-        )
-
-    def set_firewall_addresses(self, adom='root', data=None):
-        return self._set(
-            url='pm/config/adom/{}/obj/firewall/address'.format(adom),
-            adom=adom,
-            data=data,
-            request_id=6671
-        )
-
     def update_firewall_addrgrp(self, adom='root', addrgrp_name=None, data=None):
         return self._update(
             url='pm/config/adom/{}/obj/firewall/addrgrp/{}'.format(
@@ -328,6 +312,29 @@ class FortiManager(SecurityConsole):
             **kwargs
         )
 
+    def get_firewall_addresses6(self, adom):
+        '''
+        Get all firewall addresses defined for an ADOM
+        '''
+        return self._get(
+            url='pm/config/adom/{}/obj/firewall/address6'.format(adom),
+            request_id=562
+        )
+
+    def get_firewall_address6_groups(self, adom, **kwargs):
+        '''
+        Get all firewall addresses defined for an ADOM
+        '''
+        return self._get(
+            url='pm/config/adom/{}/obj/firewall/addrgrp6'.format(adom),
+            request_id=5622,
+            **kwargs
+        )
+
+    ############################################################################
+    # Firewall Address
+    ############################################################################
+
     def get_firewall_addresses(self, adom, **kwargs):
         '''
         Get all firewall addresses defined for an ADOM
@@ -338,9 +345,25 @@ class FortiManager(SecurityConsole):
             **kwargs
         )
 
+    def add_firewall_addresses(self, adom='root', data=None):
+        return self._add(
+            url='pm/config/adom/{}/obj/firewall/address'.format(adom),
+            adom=adom,
+            data=data,
+            request_id=6670
+        )
+
+    def set_firewall_addresses(self, adom='root', data=None):
+        return self._set(
+            url='pm/config/adom/{}/obj/firewall/address'.format(adom),
+            adom=adom,
+            data=data,
+            request_id=6671
+        )
+
     def update_firewall_addresses(self, adom, data, **kwargs):
         '''
-        Set all firewall addresses defined for an ADOM
+        Update all firewall addresses defined for an ADOM
         '''
         return self._update(
             url='pm/config/adom/{}/obj/firewall/address'.format(adom),
@@ -362,6 +385,44 @@ class FortiManager(SecurityConsole):
             adom=adom,
             request_id=5625
         )
+
+    def get_firewall_address_group(self, adom, addrgrp_name, **kwargs):
+        '''
+        Get all firewall adress groups defined for an ADOM
+        '''
+        return self._get(
+            url='pm/config/adom/{}/obj/firewall/addrgrp/{}'.format(
+                adom, addrgrp_name
+            ),
+            request_id=562270,
+            **kwargs
+        )
+
+    def get_firewall_address_groups(self, adom, **kwargs):
+        '''
+        Get all firewall address groups defined for an ADOM
+        '''
+        return self._get(
+            url='pm/config/adom/{}/obj/firewall/addrgrp'.format(adom),
+            request_id=56227,
+            **kwargs
+        )
+
+    def update_firewall_address_groups(self, adom, data, **kwargs):
+        '''
+        Update firewall address groups defined for an ADOM
+        '''
+        return self._update(
+            url='pm/config/adom/{}/obj/firewall/addrgrp'.format(adom),
+            adom=adom,
+            data=data,
+            request_id=56228,
+            **kwargs
+        )
+
+    ############################################################################
+    # Firewall Proxy Address
+    ############################################################################
 
     def get_firewall_proxy_addresses(self, adom, **kwargs):
         '''
@@ -410,47 +471,6 @@ class FortiManager(SecurityConsole):
             request_id=5629
         )
 
-    def get_firewall_addresses6(self, adom):
-        '''
-        Get all firewall addresses defined for an ADOM
-        '''
-        return self._get(
-            url='pm/config/adom/{}/obj/firewall/address6'.format(adom),
-            request_id=562
-        )
-
-    def get_firewall_address6_groups(self, adom, **kwargs):
-        '''
-        Get all firewall addresses defined for an ADOM
-        '''
-        return self._get(
-            url='pm/config/adom/{}/obj/firewall/addrgrp6'.format(adom),
-            request_id=5622,
-            **kwargs
-        )
-
-    def get_firewall_address_groups(self, adom, **kwargs):
-        '''
-        Get all firewall address groups defined for an ADOM
-        '''
-        return self._get(
-            url='pm/config/adom/{}/obj/firewall/addrgrp'.format(adom),
-            request_id=56227,
-            **kwargs
-        )
-
-    def update_firewall_address_groups(self, adom, data, **kwargs):
-        '''
-        Update firewall address groups defined for an ADOM
-        '''
-        return self._update(
-            url='pm/config/adom/{}/obj/firewall/addrgrp'.format(adom),
-            adom=adom,
-            data=data,
-            request_id=56228,
-            **kwargs
-        )
-
     def get_firewall_proxy_address_groups(self, adom, **kwargs):
         '''
         Get all firewall proxy address groups defined for an ADOM
@@ -470,18 +490,6 @@ class FortiManager(SecurityConsole):
             adom=adom,
             data=data,
             request_id=56230,
-            **kwargs
-        )
-
-    def get_firewall_address_group(self, adom, addrgrp_name, **kwargs):
-        '''
-        Get all firewall adress groups defined for an ADOM
-        '''
-        return self._get(
-            url='pm/config/adom/{}/obj/firewall/addrgrp/{}'.format(
-                adom, addrgrp_name
-            ),
-            request_id=562270,
             **kwargs
         )
 
@@ -573,7 +581,7 @@ class FortiManager(SecurityConsole):
             **kwargs
         )
 
-    def get_firewall_wildcard_fqdn_groups(self, adom, data, **kwargs):
+    def update_firewall_wildcard_fqdn_groups(self, adom, data, **kwargs):
         '''
         Update firewall wildcard fqdn groups defined for an ADOM
         '''
