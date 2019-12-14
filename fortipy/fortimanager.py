@@ -772,11 +772,15 @@ class FortiManager(SecurityConsole):
         params:
             data {list[str]} -- A list of rating keys (urls) to delete
         '''
+
+        # Compile a filter to support URLs with path (weird work-around)
+        filter_ = ['url', 'in'] + [url for url in data]
+
         return self._delete(
-            url=['/pm/config/adom/{}/obj/webfilter/ftgd-local-rating/{}'
-                 .format(adom, url) for url in data],
+            url='/pm/config/adom/{}/obj/webfilter/ftgd-local-rating/'.format(adom),
             adom=adom,
-            request_id=8186
+            request_id=8186,
+            filter_=filter_
         )
 
     def get_ips_sensors(self, adom, **kwargs):

@@ -275,7 +275,7 @@ class Forti(object):
                 params = ({'url': _url} for _url in url)
             else:
                 params = {'url': url}
-            # params.update(kwargs_to_json_handler(kwargs))
+            params.update(kwargs_to_json_handler(kwargs))
             post_data = json.dumps({
                 'method': 'delete',
                 'params': list(params),
