@@ -1,4 +1,4 @@
-def is_iterable(obj):
+def is_iterable_no_str(obj):
     try:
         iter(obj)
     except TypeError:

@@ -15,7 +15,7 @@ import logging
 import requests
 
 
-from .utils import is_iterable, kwargs_to_json_handler
+from .utils import is_iterable_no_str, kwargs_to_json_handler
 
 from .exceptions import ConnectionError
 from .exceptions import LoginError
@@ -271,14 +271,13 @@ class Forti(object):
                           JSON API documentation and method used.
         '''
         try:
-            if is_iterable(url):
-                params = ({'url': _url} for _url in url)
+            if is_iterable_no_str(url):
+                params = [{'url': _url} for _url in url]
             else:
-                params = {'url': url}
-            params.update(kwargs_to_json_handler(kwargs))
+                params = [{'url': url, **kwargs_to_json_handler(kwargs)}]
             post_data = json.dumps({
                 'method': 'delete',
-                'params': list(params),
+                'params': params,
                 'id': request_id,
                 'verbose': verbose,
                 'jsonrpc': '2.0',
