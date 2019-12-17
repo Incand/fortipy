@@ -778,7 +778,6 @@ class FortiManager(SecurityConsole):
 
         return self._delete(
             url='/pm/config/adom/{}/obj/webfilter/ftgd-local-rating/'.format(adom),
-            adom=adom,
             request_id=8186,
             filter_=filter_
         )
