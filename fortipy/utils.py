@@ -1,4 +1,6 @@
 def is_iterable_no_str(obj):
+    if isinstance(obj, str):
+        return False
     try:
         iter(obj)
     except TypeError:
