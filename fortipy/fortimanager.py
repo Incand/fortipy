@@ -780,6 +780,7 @@ class FortiManager(SecurityConsole):
             url='/pm/config/adom/{}/obj/webfilter/ftgd-local-rating/'.format(adom),
             request_id=8186,
             filter_=filter_,
+            confirm=1,
             adom=adom
         )
 
