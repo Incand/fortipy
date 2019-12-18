@@ -88,7 +88,7 @@ def toggle_lock(f):
         '''
         Function to be applied on top of all deorated methods
         '''
-        adom = kwargs['adom']
+        adom = kwargs.pop('adom')
         self.lock_adom(adom=adom)
 
         res = f(self, *args, **kwargs)
@@ -270,10 +270,28 @@ class Forti(object):
         :param \**kwargs: Additional params according to the FortiManager
                           JSON API documentation and method used.
         '''
+        return self._request(
+            method='delete',
+            url=url,
+            request_id=request_id,
+            verbose=verbose,
+            **kwargs
+        )
+
+    @toggle_lock
+    @login_required
+    def _delete_obs(self, url, request_id=13, verbose=False, **kwargs):
+        '''
+        Perform a JSON request
+        :param url: Internal URL(s)
+        :param \**kwargs: Additional params according to the FortiManager
+                          JSON API documentation and method used.
+        '''
         try:
             if is_iterable_no_str(url):
                 params = [{'url': _url} for _url in url]
             else:
+                kwargs.pop('adom')
                 params = [{'url': url, **kwargs_to_json_handler(kwargs)}]
             post_data = json.dumps({
                 'method': 'delete',

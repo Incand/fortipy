@@ -779,7 +779,8 @@ class FortiManager(SecurityConsole):
         return self._delete(
             url='/pm/config/adom/{}/obj/webfilter/ftgd-local-rating/'.format(adom),
             request_id=8186,
-            filter_=filter_
+            filter_=filter_,
+            adom=adom
         )
 
     def get_ips_sensors(self, adom, **kwargs):
