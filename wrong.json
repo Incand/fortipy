@@ -1,0 +1,17 @@
+{
+  "method": "delete",
+  "params": [
+    {
+      "url": "/pm/config/adom/BDF_6_0/obj/webfilter/ftgd-local-rating/",
+      "filter": [
+        "url",
+        "in",
+        "gnpfoliofiscal.com:80/newv/gnp98798el47908123nbdqweqwe31298hekwahe"
+      ]
+    }
+  ],
+  "id": 8186,
+  "verbose": false,
+  "jsonrpc": "2.0",
+  "session": "rgnRCTxDv87/xlv/THJADpEt83Ks9oVir9uV09cAc/Etjkx1nHxbzh4gDIjES9dCKfBlcWxMbBEleSSHaZMIQA=="
+}
